@@ -16,6 +16,7 @@ import javax.sql.DataSource;
 @MapperScan(basePackages = "com.dynamic.report.dao", sqlSessionFactoryRef = "masterSqlSessionFactory")
 public class DynamicSqlSessionFactory {
 
+    @Primary
     @Bean(name = "dynamicDataSource")
     public DataSource dynamicDataSource() {
         return new DynamicDataSourceConfigurer();

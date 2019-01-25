@@ -8,15 +8,15 @@ import org.springframework.context.annotation.Primary;
 
 import javax.sql.DataSource;
 
-@Configuration
+//@Configuration
 public class MasterConfigurer {
 
-    @Primary
-    @Bean(name = "masterDataSource")
-    @ConfigurationProperties(prefix = "datasource.master")
-    public DataSource masterDataSource() {
-        return DataSourceBuilder.create().build();
-    }
+//    @Primary
+//    @Bean(name = "masterDataSource")
+//    @ConfigurationProperties(prefix = "datasource.master")
+//    public DataSource masterDataSource() {
+//        return DataSourceBuilder.create().build();
+//    }
 
 
 }

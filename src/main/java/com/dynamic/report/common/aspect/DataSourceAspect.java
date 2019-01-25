@@ -1,11 +1,10 @@
 package com.dynamic.report.common.aspect;
 
+import com.dynamic.report.common.datasource.SwitchDataSource;
 import com.dynamic.report.entity.DataSourceInfo;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +15,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 @Aspect
@@ -29,23 +31,17 @@ public class DataSourceAspect {
     public void execute() {}
 
     @Around("execute()")
-    public void aroundAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
-
-        HttpServletRequest request = getRequest();
-        Enumeration<String> headerNames = request.getHeaderNames();
-        DataSourceInfo dataSourceInfo = new DataSourceInfo();
-        Field[] fields = DataSourceInfo.class.getFields();
-        while (headerNames.hasMoreElements()) {
-            String name = headerNames.nextElement();
-            String value = request.getHeader(name);
+    public Object aroundAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
+        try {
+            logger.info(" DataSourceAspect begin =>> ");
+            HttpServletRequest request = getRequest();
+            DataSourceInfo dataSourceInfo = createDataSourceInfo(request);
+            SwitchDataSource.setDataSources(dataSourceInfo);
+            return joinPoint.proceed();
+        } finally {
+            SwitchDataSource.clear();
+            logger.info(" DataSourceAspect end =>> ");
         }
-
-        System.out.println("aroundBeforeAdvice ====> ");
-
-
-
-        joinPoint.proceed();
-        System.out.println("aroundAfterAdvice ====> ");
     }
 
     private HttpServletRequest getRequest() {
@@ -54,8 +50,29 @@ public class DataSourceAspect {
         return servletRequestAttributes.getRequest();
     }
 
-    private Map<String, Field> getField() {
+    private DataSourceInfo createDataSourceInfo(HttpServletRequest request) {
+        Map<String, String> param = new HashMap<>();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            String value = request.getHeader(name);
+            param.put(name, value);
+        }
+        DataSourceInfo dataSourceInfo = new DataSourceInfo();
+        Class<? extends DataSourceInfo> clazz = DataSourceInfo.class;
+        Method[] methods = clazz.getDeclaredMethods();
+        for(Method method : methods) {
+            String methodStr = method.getName().substring(3).toLowerCase();
+            if(param.containsKey(methodStr) && "set".equals(method.getName().substring(0, 3)) ) {
+                try {
+                    method.invoke(dataSourceInfo, param.get(methodStr));
+                } catch (Exception e) {
+                    logger.error("设置参数错误" + "name =" + methodStr + " value = " + param.get(methodStr) , e);
+                }
+            }
+        }
 
+        return dataSourceInfo;
     }
 
 }
