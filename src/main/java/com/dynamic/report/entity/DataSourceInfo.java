@@ -2,8 +2,6 @@ package com.dynamic.report.entity;
 
 public class DataSourceInfo {
 
-    private String switchKey;
-
     private String name;
 
     private String driverClassName;
@@ -13,14 +11,6 @@ public class DataSourceInfo {
     private String username;
 
     private String password;
-
-    public String getSwitchKey() {
-        return switchKey;
-    }
-
-    public void setSwitchKey(String switchKey) {
-        this.switchKey = switchKey;
-    }
 
     public String getName() {
         return name;
