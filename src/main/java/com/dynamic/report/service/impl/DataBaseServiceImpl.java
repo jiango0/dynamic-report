@@ -3,8 +3,10 @@ package com.dynamic.report.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.dynamic.report.dao.DataSourceInfoMapper;
 import com.dynamic.report.entity.DataSourceInfo;
 import com.dynamic.report.service.DataBaseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -18,15 +20,15 @@ public class DataBaseServiceImpl implements DataBaseService {
     @Value("classpath:json/data")
     private Resource data;
 
+    @Autowired
+    private DataSourceInfoMapper dataSourceInfoMapper;
+
     public List<DataSourceInfo> list() {
-        String data = readData();
-        return JSON.parseArray(data, DataSourceInfo.class);
+        return dataSourceInfoMapper.list(null);
     }
 
     public void save(DataSourceInfo dataSourceInfo) {
-        JSONArray arrays = JSON.parseArray(readData());
-        arrays.add(dataSourceInfo);
-        this.writeData(arrays.toString());
+        dataSourceInfoMapper.save(dataSourceInfo);
     }
 
     public void delete(String name) {

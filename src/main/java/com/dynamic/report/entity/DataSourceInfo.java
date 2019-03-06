@@ -2,6 +2,8 @@ package com.dynamic.report.entity;
 
 public class DataSourceInfo {
 
+    private Long id;
+
     private String name;
 
     private String driverClassName;
@@ -11,6 +13,14 @@ public class DataSourceInfo {
     private String username;
 
     private String password;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

@@ -5,25 +5,21 @@ import com.dynamic.report.common.datasource.CreateDataSource;
 import com.dynamic.report.common.datasource.SwitchDataSource;
 import com.dynamic.report.entity.DataSourceInfo;
 import com.dynamic.report.notice.event.NoticeEvent;
-import com.dynamic.report.service.DataBaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 public class DynamicDataSourceConfigurer extends AbstractRoutingDataSource {
 
     // 默认数据源，也就是主库
-//    @Resource(name = "masterDataSource")
-//    protected DataSource masterDataSource;
+    @Resource(name = "masterDataSource")
+    protected DataSource masterDataSource;
 
     @Autowired
     ApplicationContext applicationContext;
@@ -32,7 +28,7 @@ public class DynamicDataSourceConfigurer extends AbstractRoutingDataSource {
     protected DataSource determineTargetDataSource() {
         DataSourceInfo dataSourceInfo = determineCurrentLookupKey();
         if( dataSourceInfo == null || StringUtils.isEmpty(dataSourceInfo.getName())) {
-            return null;
+            return masterDataSource;
         }
 
         DataSource dataSource = DataSourceCache.cacheDataSource.get(dataSourceInfo.getName());
