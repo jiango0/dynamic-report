@@ -38,7 +38,7 @@ public class BasicServiceImpl implements BasicService {
         }
 
         if (tableList.size() == 1) {
-            SQLCommand.formatSql(sql, null);
+            sql = SQLCommand.formatSql(sql, null);
         }
 
         List<Map<String, Object>> select = basicMapper.select(sql);
