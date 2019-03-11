@@ -1,5 +1,6 @@
 package com.dynamic.report.controller;
 
+import com.dynamic.report.common.command.SQLCommand;
 import com.dynamic.report.common.entity.ResultEntity;
 import com.dynamic.report.service.BasicService;
 import org.springframework.beans.factory.annotation.Autowired;
