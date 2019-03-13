@@ -1,6 +1,8 @@
 package com.dynamic.report.common.command;
 
 import com.dynamic.report.common.entity.SQLEntity;
+import com.dynamic.report.common.entity.TableInfo;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,18 +11,23 @@ public class SQLCommand {
 
     public static String FROM = "from";
 
-    public static String formatSql(String sql, String tableName) {
+    public static String formatSql(String sql, TableInfo tableInfo) {
         StringBuilder stringBuffer = new StringBuilder("select ");
-        String[] selectArr = SQLCommand.getSelectArr(sql);
+        int index = SQLCommand.getSelectIndex(sql);
+        String[] selectArr = sql.substring(6, index).split("[,]");
         for(int i=0; i<selectArr.length; i++) {
             String select = selectArr[i];
-            stringBuffer.append(tableName);
-            stringBuffer.append(".");
+            if (!select.contains(".")) {
+                stringBuffer.append(!StringUtils.isEmpty(tableInfo.getTableAlias()) ? tableInfo.getTableAlias() : tableInfo.getTableName());
+                stringBuffer.append(".");
+            }
             stringBuffer.append(select);
-            if (i == selectArr.length -1) {
+            stringBuffer.append(" ");
+            if (i != selectArr.length -1) {
                 stringBuffer.append(",");
             }
         }
+        stringBuffer.append(sql.substring(index));
 
         return stringBuffer.toString();
     }

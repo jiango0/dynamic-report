@@ -3,19 +3,19 @@ package com.dynamic.report.service.impl;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.dialect.postgresql.visitor.PGSchemaStatVisitor;
+import com.alibaba.druid.stat.TableStat;
 import com.alibaba.druid.util.JdbcConstants;
 import com.dynamic.report.common.command.SQLCommand;
+import com.dynamic.report.common.entity.ColumnInfo;
 import com.dynamic.report.common.entity.SQLEntity;
 import com.dynamic.report.common.entity.TableInfo;
 import com.dynamic.report.dao.BasicMapper;
+import com.dynamic.report.entity.BasicResult;
 import com.dynamic.report.service.BasicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class BasicServiceImpl implements BasicService {
@@ -23,47 +23,82 @@ public class BasicServiceImpl implements BasicService {
     @Autowired
     BasicMapper basicMapper;
 
-    public List<Map<String, Object>> select(String sql) {
-
+    public BasicResult select(String sql) {
+        BasicResult basicResult = new BasicResult();
         List<SQLStatement> sqlStatements = SQLUtils.parseStatements(sql, JdbcConstants.MYSQL);
         List<String> tableList = new ArrayList<>();
+        List<String> aliasList = new ArrayList<>();
+        List<TableInfo> tableInfoList = new ArrayList<>();
         for (int i=0; i<sqlStatements.size(); i++) {
             SQLStatement stmt = sqlStatements.get(i);
             PGSchemaStatVisitor visitor = new PGSchemaStatVisitor();
             stmt.accept(visitor);
+            //tables
+            Map<TableStat.Name, TableStat> tabmap = visitor.getTables();
+            for (Iterator iterator = tabmap.keySet().iterator(); iterator.hasNext();) {
+                TableStat.Name name = (TableStat.Name) iterator.next();
+                TableInfo tableInfo = new TableInfo();
+                tableInfo.setTableName(name.getName());
+                tableInfoList.add(tableInfo);
+                tableList.add(name.getName());
+            }
+            //alias
             Map<String, String> aliasmap = visitor.getAliasMap();
             for (Iterator iterator = aliasmap.keySet().iterator(); iterator.hasNext();) {
-                tableList.add(iterator.next().toString());
+                String key = iterator.next().toString();
+                String value = aliasmap.get(key);
+
+                for (TableInfo tableInfo : tableInfoList) {
+                    if (tableInfo.getTableName().equals(value)) {
+                        tableInfo.setTableAlias(key);
+                        break;
+                    }
+                }
+                aliasList.add(iterator.next().toString());
             }
         }
 
-        if (tableList.size() == 1) {
-            sql = SQLCommand.formatSql(sql, null);
+        if (tableInfoList.size() == 1) {
+            TableInfo tableInfo = tableInfoList.get(0);
+            sql = SQLCommand.formatSql(sql, tableInfo);
         }
 
         List<Map<String, Object>> select = basicMapper.select(sql);
+        basicResult.setList(select);
 
+        Map<String, String> tableInfo = this.getTableInfo(tableInfoList);
         List<SQLEntity> sqlEntitieList = SQLCommand.analyzeSql(sql);
-        List<TableInfo> tableInfoList = this.getTableInfo(tableList);
+        for (SQLEntity sqlEntity : sqlEntitieList) {
+            sqlEntity.setFieldName(tableInfo.get(sqlEntity.getFieldCode()));
+        }
+        basicResult.setSqlEntitieList(sqlEntitieList);
 
-        return basicMapper.select(sql);
+        return basicResult;
     }
 
-    public List<TableInfo> getTableInfo(List<String> tableList) {
-        List<TableInfo> tableInfoList = new ArrayList<>();
-        for(String tableName : tableList) {
-            List<Map<String, String>> maps = basicMapper.tableInfo(tableName);
-            for(Map<String, String> map : maps ) {
-                TableInfo tableInfo = new TableInfo();
-                tableInfo.setTableName(tableName);
-                tableInfo.setColumnName(map.get("column_name"));
-                tableInfo.setColumnComment(map.get("column_comment"));
+    public Map<String, String> getTableInfo(List<TableInfo> tableInfoList) {
 
-                tableInfoList.add(tableInfo);
+        for (TableInfo tableInfo : tableInfoList) {
+            List<Map<String, String>> maps = basicMapper.tableInfo(tableInfo.getTableName());
+            for (Map<String, String> map : maps) {
+                ColumnInfo columnInfo = new ColumnInfo();
+                columnInfo.setColumnName(map.get("column_name"));
+                columnInfo.setColumnComment(map.get("column_comment"));
+                if (tableInfo.getList() == null) {
+                    tableInfo.setList(new ArrayList<>());
+                }
+                tableInfo.getList().add(columnInfo);
             }
         }
 
-        return tableInfoList;
+        Map<String, String> param = new HashMap<>();
+        for (TableInfo tableInfo : tableInfoList) {
+            for (ColumnInfo columnInfo : tableInfo.getList()) {
+                param.put(tableInfo.getTableName() + "." + columnInfo.getColumnName(), columnInfo.getColumnComment());
+            }
+        }
+
+        return param;
     }
 
 }

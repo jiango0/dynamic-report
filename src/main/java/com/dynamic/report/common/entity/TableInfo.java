@@ -1,12 +1,14 @@
 package com.dynamic.report.common.entity;
 
+import java.util.List;
+
 public class TableInfo {
 
     private String tableName;
 
-    private String columnName;
+    private String tableAlias;
 
-    private String columnComment;
+    private List<ColumnInfo> list;
 
     public String getTableName() {
         return tableName;
@@ -16,19 +18,19 @@ public class TableInfo {
         this.tableName = tableName;
     }
 
-    public String getColumnName() {
-        return columnName;
+    public String getTableAlias() {
+        return tableAlias;
     }
 
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
+    public void setTableAlias(String tableAlias) {
+        this.tableAlias = tableAlias;
     }
 
-    public String getColumnComment() {
-        return columnComment;
+    public List<ColumnInfo> getList() {
+        return list;
     }
 
-    public void setColumnComment(String columnComment) {
-        this.columnComment = columnComment;
+    public void setList(List<ColumnInfo> list) {
+        this.list = list;
     }
 }

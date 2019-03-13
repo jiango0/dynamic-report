@@ -2,6 +2,7 @@ package com.dynamic.report.controller;
 
 import com.dynamic.report.common.command.SQLCommand;
 import com.dynamic.report.common.entity.ResultEntity;
+import com.dynamic.report.entity.BasicResult;
 import com.dynamic.report.service.BasicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,7 @@ public class BasicController {
     BasicService basicService;
 
     @RequestMapping(value = "sql")
-    public ResultEntity<List<Map<String, Object>>> execute(String sql) {
+    public ResultEntity<BasicResult> execute(String sql) {
         return ResultEntity.returnSuccess(basicService.select(sql));
     }
 

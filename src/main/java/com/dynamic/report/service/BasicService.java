@@ -1,10 +1,9 @@
 package com.dynamic.report.service;
 
-import java.util.List;
-import java.util.Map;
+import com.dynamic.report.entity.BasicResult;
 
 public interface BasicService {
 
-    List<Map<String, Object>> select(String sql);
+    BasicResult select(String sql);
 
 }
