@@ -16,7 +16,7 @@ public class SQLCommand {
         int index = SQLCommand.getSelectIndex(sql);
         String[] selectArr = sql.substring(6, index).split("[,]");
         for(int i=0; i<selectArr.length; i++) {
-            String select = selectArr[i];
+            String select = selectArr[i].trim();
             if (!select.contains(".")) {
                 stringBuffer.append(!StringUtils.isEmpty(tableInfo.getTableAlias()) ? tableInfo.getTableAlias() : tableInfo.getTableName());
                 stringBuffer.append(".");
@@ -50,9 +50,12 @@ public class SQLCommand {
                 sqlEntity.setFieldCode(asArr[0].trim());
             }
             else if (entity.contains(" ")) {
-                String[] spaceArr = entity.split(" ");
+                String[] spaceArr = entity.split("[ ]");
                 sqlEntity.setAliasCode(spaceArr[spaceArr.length-1].trim());
                 sqlEntity.setFieldCode(spaceArr[0].trim());
+            }
+            else {
+                sqlEntity.setFieldCode(entity);
             }
 
             result.add(sqlEntity);

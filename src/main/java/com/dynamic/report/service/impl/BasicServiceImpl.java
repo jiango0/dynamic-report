@@ -5,6 +5,7 @@ import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.dialect.postgresql.visitor.PGSchemaStatVisitor;
 import com.alibaba.druid.stat.TableStat;
 import com.alibaba.druid.util.JdbcConstants;
+import com.alibaba.druid.util.StringUtils;
 import com.dynamic.report.common.command.SQLCommand;
 import com.dynamic.report.common.entity.ColumnInfo;
 import com.dynamic.report.common.entity.SQLEntity;
@@ -26,8 +27,6 @@ public class BasicServiceImpl implements BasicService {
     public BasicResult select(String sql) {
         BasicResult basicResult = new BasicResult();
         List<SQLStatement> sqlStatements = SQLUtils.parseStatements(sql, JdbcConstants.MYSQL);
-        List<String> tableList = new ArrayList<>();
-        List<String> aliasList = new ArrayList<>();
         List<TableInfo> tableInfoList = new ArrayList<>();
         for (int i=0; i<sqlStatements.size(); i++) {
             SQLStatement stmt = sqlStatements.get(i);
@@ -40,7 +39,6 @@ public class BasicServiceImpl implements BasicService {
                 TableInfo tableInfo = new TableInfo();
                 tableInfo.setTableName(name.getName());
                 tableInfoList.add(tableInfo);
-                tableList.add(name.getName());
             }
             //alias
             Map<String, String> aliasmap = visitor.getAliasMap();
@@ -54,7 +52,6 @@ public class BasicServiceImpl implements BasicService {
                         break;
                     }
                 }
-                aliasList.add(iterator.next().toString());
             }
         }
 
@@ -95,6 +92,9 @@ public class BasicServiceImpl implements BasicService {
         for (TableInfo tableInfo : tableInfoList) {
             for (ColumnInfo columnInfo : tableInfo.getList()) {
                 param.put(tableInfo.getTableName() + "." + columnInfo.getColumnName(), columnInfo.getColumnComment());
+                if (!StringUtils.isEmpty(tableInfo.getTableAlias())) {
+                    param.put(tableInfo.getTableAlias() + "." + columnInfo.getColumnName(), columnInfo.getColumnComment());
+                }
             }
         }
 
