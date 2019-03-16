@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/bootstrap-theme.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet"/>
+
+    <script th:src="@{/js/jquery-3.2.1.min.js}" type="text/javascript"></script>
+    <script th:src="@{/js/bootstrap.min.js}" type="text/javascript"></script>
+    <script th:src="@{/js/ie-emulation-modes-warning.js}"></script>
+    <script th:src="@{/js/holder.min.js}"></script>
+    <script th:src="@{/js/bootstrap-treeview.js}"></script>
+    <script th:src="@{/js/index.js}" type="text/javascript"></script>
+</head>
+<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Project name</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a  data-toggle="modal" data-target="#create_connection_window">创建连接</a></li>
+                    <li><a href="#">创建模版</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar">
+                <div id="treeview1" class=""></div>
+            </div>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab1" data-toggle="tab">结果</a></li>
+                    <li><a href="#tab2" data-toggle="tab">SQL</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab1">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="table_sql">
+
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab2">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- 创建连接窗口 -->
+    <div class="modal fade" id="create_connection_window" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" id="form">
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">连接名称</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="name" name="name" class="form-control"/>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="url" class="col-sm-2 control-label">URL</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="url" name="url" class="form-control"/>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="username" class="col-sm-2 control-label">帐号</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="username" name="username" class="form-control"/>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="col-sm-2 control-label">密码</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="password" name="password" class="form-control"/>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="close_connection" class="btn" data-dismiss="modal">关闭</button>
+                    <button id="save_connection"  class="btn btn-primary" >保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

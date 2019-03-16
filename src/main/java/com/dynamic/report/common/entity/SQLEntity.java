@@ -8,6 +8,8 @@ public class SQLEntity {
 
     private String aliasCode;
 
+    private String field;
+
     private boolean subQuery;
 
     public String getFieldName() {
@@ -32,6 +34,14 @@ public class SQLEntity {
 
     public void setAliasCode(String aliasCode) {
         this.aliasCode = aliasCode;
+    }
+
+    public String getField() {
+        return field;
+    }
+
+    public void setField(String field) {
+        this.field = field;
     }
 
     public boolean isSubQuery() {

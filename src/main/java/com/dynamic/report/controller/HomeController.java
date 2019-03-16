@@ -12,4 +12,14 @@ public class HomeController {
         return "main";
     }
 
+    @RequestMapping("index")
+    public String index() {
+        return "index";
+    }
+
+    @RequestMapping("test")
+    public String test() {
+        return "test";
+    }
+
 }

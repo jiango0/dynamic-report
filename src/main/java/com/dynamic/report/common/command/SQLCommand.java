@@ -51,14 +51,17 @@ public class SQLCommand {
                 String[] asArr = entity.split("as");
                 sqlEntity.setAliasCode(asArr[asArr.length-1].trim());
                 sqlEntity.setFieldCode(asArr[0].trim());
+                sqlEntity.setField(asArr[0].substring(asArr[0].indexOf(".")+1).trim());
             }
             else if (entity.contains(" ")) {
                 String[] spaceArr = entity.split("[ ]");
                 sqlEntity.setAliasCode(spaceArr[spaceArr.length-1].trim());
                 sqlEntity.setFieldCode(spaceArr[0].trim());
+                sqlEntity.setField(spaceArr[0].substring(spaceArr[0].indexOf(".")+1).trim());
             }
             else {
                 sqlEntity.setFieldCode(entity);
+                sqlEntity.setField(entity.substring(entity.indexOf(".")+1).trim());
             }
 
             result.add(sqlEntity);
