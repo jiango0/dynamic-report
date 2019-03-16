@@ -41,8 +41,11 @@ public class SQLCommand {
 
             if (entity.contains("(") && entity.contains(")")) {
                 sqlEntity.setSubQuery(Boolean.TRUE);
-                sqlEntity.setAliasCode(entity.substring(entity.indexOf(")") + 1).trim());
                 sqlEntity.setFieldCode(entity.substring(0, entity.indexOf(")") + 1).trim());
+                String alias = entity.substring(entity.indexOf(")") + 1);
+                if (alias.contains("as")) {
+                    sqlEntity.setAliasCode(alias.substring(alias.indexOf("as") + 2).trim());
+                }
             }
             else if (entity.contains("as")) {
                 String[] asArr = entity.split("as");

@@ -27,13 +27,13 @@ public class DynamicDataSourceConfigurer extends AbstractRoutingDataSource {
     @Override
     protected DataSource determineTargetDataSource() {
         DataSourceInfo dataSourceInfo = determineCurrentLookupKey();
-        if( dataSourceInfo == null || StringUtils.isEmpty(dataSourceInfo.getName())) {
+        if( dataSourceInfo == null || dataSourceInfo.getId() == null) {
             return masterDataSource;
         }
 
-        DataSource dataSource = DataSourceCache.cacheDataSource.get(dataSourceInfo.getName());
+        DataSource dataSource = DataSourceCache.cacheDataSource.get(dataSourceInfo.getId().toString());
         if(dataSource == null) {
-            dataSource = create(dataSourceInfo);
+            throw new RuntimeException("datasource not find");
         }
 
         return dataSource;
@@ -48,22 +48,22 @@ public class DynamicDataSourceConfigurer extends AbstractRoutingDataSource {
     public void afterPropertiesSet() {
     }
 
-    private synchronized DataSource create(DataSourceInfo dataSourceInfo) {
-        DataSource dataSource = DataSourceCache.cacheDataSource.get(dataSourceInfo.getName());
-        if(dataSource == null) {
-            dataSource = CreateDataSource.get(
-                    dataSourceInfo.getDriverClassName(),
-                    dataSourceInfo.getUrl(),
-                    dataSourceInfo.getUsername(),
-                    dataSourceInfo.getPassword());
-
-            //放入换缓存信息
-            DataSourceCache.cacheDataSource.put(dataSourceInfo.getName(), dataSource);
-
-            applicationContext.publishEvent(new NoticeEvent(this, dataSourceInfo));
-        }
-
-        return dataSource;
-    }
+//    private synchronized DataSource create(DataSourceInfo dataSourceInfo) {
+//        DataSource dataSource = DataSourceCache.cacheDataSource.get(dataSourceInfo.getName());
+//        if(dataSource == null) {
+//            dataSource = CreateDataSource.get(
+//                    dataSourceInfo.getDriverClassName(),
+//                    dataSourceInfo.getUrl(),
+//                    dataSourceInfo.getUsername(),
+//                    dataSourceInfo.getPassword());
+//
+//            //放入换缓存信息
+//            DataSourceCache.cacheDataSource.put(dataSourceInfo.getName(), dataSource);
+//
+//            applicationContext.publishEvent(new NoticeEvent(this, dataSourceInfo));
+//        }
+//
+//        return dataSource;
+//    }
 
 }

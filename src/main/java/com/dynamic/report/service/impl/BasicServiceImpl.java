@@ -47,7 +47,7 @@ public class BasicServiceImpl implements BasicService {
                 String value = aliasmap.get(key);
 
                 for (TableInfo tableInfo : tableInfoList) {
-                    if (tableInfo.getTableName().equals(value)) {
+                    if (tableInfo.getTableName().equals(value) && !key.equals(value)) {
                         tableInfo.setTableAlias(key);
                         break;
                     }

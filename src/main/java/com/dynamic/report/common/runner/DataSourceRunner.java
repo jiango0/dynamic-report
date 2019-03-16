@@ -22,7 +22,7 @@ public class DataSourceRunner implements CommandLineRunner {
         List<DataSourceInfo> list = dataBaseService.list();
         if(!CollectionUtils.isEmpty(list)) {
             for(DataSourceInfo dataSourceInfo : list) {
-                DataSourceCache.cacheDataSource.put(dataSourceInfo.getName(),
+                DataSourceCache.cacheDataSource.put(dataSourceInfo.getId().toString(),
                         CreateDataSource.get(
                             dataSourceInfo.getDriverClassName(),
                             dataSourceInfo.getUrl(),
