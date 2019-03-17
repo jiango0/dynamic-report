@@ -41,4 +41,5 @@ public class ModelInfo {
     public void setDataSourceId(Long dataSourceId) {
         this.dataSourceId = dataSourceId;
     }
+
 }

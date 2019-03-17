@@ -9,12 +9,16 @@
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/bootstrap-theme.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/dashboard.css}" rel="stylesheet"/>
+    <link th:href="@{/css/bootstrap-datetimepicker.min.css}" rel="stylesheet"/>
+    <link href="http://cdn.bootcss.com/twitter-bootstrap/2.2.2/css/bootstrap-responsive.min.css" rel="stylesheet"/>
 
     <script th:src="@{/js/jquery-3.2.1.min.js}" type="text/javascript"></script>
     <script th:src="@{/js/bootstrap.min.js}" type="text/javascript"></script>
     <script th:src="@{/js/ie-emulation-modes-warning.js}"></script>
     <script th:src="@{/js/holder.min.js}"></script>
     <script th:src="@{/js/bootstrap-treeview.js}"></script>
+    <script th:src="@{/js/bootstrap-datetimepicker.min.js}"></script>
+    <script th:src="@{/js/bootstrap-datetimepicker.zh-CN.js}"></script>
     <script th:src="@{/js/index.js}" type="text/javascript"></script>
 </head>
 <body>
@@ -32,8 +36,8 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a  data-toggle="modal" data-target="#create_connection_window">创建连接</a></li>
-                    <li><a href="#">创建模版</a></li>
+                    <li><a href="javascript:void(0)" data-toggle="modal" data-target="#create_connection_window">创建连接</a></li>
+                    <li><a href="javascript:void(0)" id="create_model">创建模版</a></li>
                 </ul>
             </div>
         </div>
@@ -47,10 +51,25 @@
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#tab1" data-toggle="tab">结果</a></li>
-                    <li><a href="#tab2" data-toggle="tab">SQL</a></li>
+                    <li class=""><a href="#tab2" data-toggle="tab">SQL</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active" id="tab1">
+                        <div></div>
+                        <div class="sub-header">
+                            <form class="form-horizontal" id="form3">
+                                <div id="condition" style="margin-top:20px;">
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label"></label>
+                                    <div class="col-sm-3">
+                                        <button id="query_data" class="btn btn-primary" >查询</button>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped" id="table_sql">
 
@@ -58,7 +77,32 @@
                         </div>
                     </div>
                     <div class="tab-pane" id="tab2">
-
+                        <form class="form-horizontal" id="form2">
+                            <div class="form-group"></div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">数据源</label>
+                                <div class="col-sm-10">
+                                    <label id="dataSourceId" class="control-label"></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="title" class="col-sm-1 control-label">标题</label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="title" name="title" class="form-control"/>
+                                    <span class="help-inline"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="content" class="col-sm-1 control-label">SQL命令</label>
+                                <div class="col-sm-10">
+                                    <textarea id="content" name="content" class="form-control" rows="6" ></textarea>
+                                    <span class="help-inline"></span>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="save_model" class="btn btn-primary" >保存</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

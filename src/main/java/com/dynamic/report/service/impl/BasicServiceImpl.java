@@ -12,9 +12,11 @@ import com.dynamic.report.common.entity.SQLEntity;
 import com.dynamic.report.common.entity.TableInfo;
 import com.dynamic.report.dao.BasicMapper;
 import com.dynamic.report.entity.BasicResult;
+import com.dynamic.report.entity.SQLCondition;
 import com.dynamic.report.service.BasicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -25,6 +27,15 @@ public class BasicServiceImpl implements BasicService {
     BasicMapper basicMapper;
 
     public BasicResult select(String sql) {
+        BasicResult basicResult = this.list(sql);
+        sql = SQLCommand.removeCondition(sql);
+        List<Map<String, Object>> select = basicMapper.select(sql);
+        basicResult.setList(select);
+
+        return basicResult;
+    }
+
+    public BasicResult list(String sql) {
         BasicResult basicResult = new BasicResult();
         List<SQLStatement> sqlStatements = SQLUtils.parseStatements(sql, JdbcConstants.MYSQL);
         List<TableInfo> tableInfoList = new ArrayList<>();
@@ -60,15 +71,20 @@ public class BasicServiceImpl implements BasicService {
             sql = SQLCommand.formatSql(sql, tableInfo);
         }
 
-        List<Map<String, Object>> select = basicMapper.select(sql);
-        basicResult.setList(select);
-
         Map<String, String> tableInfo = this.getTableInfo(tableInfoList);
         List<SQLEntity> sqlEntitieList = SQLCommand.analyzeSql(sql);
         for (SQLEntity sqlEntity : sqlEntitieList) {
             sqlEntity.setFieldName(tableInfo.get(sqlEntity.getFieldCode()));
         }
         basicResult.setSqlEntitieList(sqlEntitieList);
+        basicResult.setSql(sql);
+
+        if (SQLCommand.containCondition(sql)) {
+            List<SQLCondition> sqlConditions = SQLCommand.analyzeCondition(sql);
+            if (!CollectionUtils.isEmpty(sqlConditions)) {
+                basicResult.setConditions(sqlConditions);
+            }
+        }
 
         return basicResult;
     }

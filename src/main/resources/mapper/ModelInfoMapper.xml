@@ -31,6 +31,12 @@
       </if>
     </trim>
   </insert>
+  <update id="update" parameterType="com.dynamic.report.entity.ModelInfo">
+    update model_info set
+    title = #{title},
+    content = #{content}
+    where id = #{id}
+  </update>
 
   <select id="list" parameterType="java.util.Map" resultType="com.dynamic.report.entity.ModelInfo">
     select

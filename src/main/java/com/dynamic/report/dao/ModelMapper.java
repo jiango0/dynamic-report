@@ -9,6 +9,8 @@ public interface ModelMapper {
 
     void save(ModelInfo modelInfo);
 
+    int update(ModelInfo modelInfo);
+
     List<ModelInfo> list(Map<String, Object> param);
 
 }

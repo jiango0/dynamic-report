@@ -18,7 +18,11 @@ public class ModelInfoServiceImpl implements ModelInfoService {
     ModelMapper modelMapper;
 
     public void save(ModelInfo modelInfo) {
-        modelMapper.save(modelInfo);
+        if (modelInfo.getId() == null) {
+            modelMapper.save(modelInfo);
+        } else {
+            modelMapper.update(modelInfo);
+        }
     }
 
     public List<ModelInfo> list(Map<String, Object> param) {

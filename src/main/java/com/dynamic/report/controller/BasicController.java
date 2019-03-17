@@ -19,4 +19,9 @@ public class BasicController {
         return ResultEntity.returnSuccess(basicService.select(sql));
     }
 
+    @RequestMapping(value = "getTableHead")
+    public ResultEntity<BasicResult> getTableHead(String sql) {
+        return ResultEntity.returnSuccess(basicService.list(sql));
+    }
+
 }

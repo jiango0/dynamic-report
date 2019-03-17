@@ -11,6 +11,10 @@ public class BasicResult {
 
     private List<SQLEntity> sqlEntitieList;
 
+    private String sql;
+
+    private List<SQLCondition> conditions;
+
     public List<Map<String, Object>> getList() {
         return list;
     }
@@ -25,5 +29,21 @@ public class BasicResult {
 
     public void setSqlEntitieList(List<SQLEntity> sqlEntitieList) {
         this.sqlEntitieList = sqlEntitieList;
+    }
+
+    public String getSql() {
+        return sql;
+    }
+
+    public void setSql(String sql) {
+        this.sql = sql;
+    }
+
+    public List<SQLCondition> getConditions() {
+        return conditions;
+    }
+
+    public void setConditions(List<SQLCondition> conditions) {
+        this.conditions = conditions;
     }
 }

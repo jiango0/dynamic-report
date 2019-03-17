@@ -2,6 +2,7 @@ package com.dynamic.report.common.command;
 
 import com.dynamic.report.common.entity.SQLEntity;
 import com.dynamic.report.common.entity.TableInfo;
+import com.dynamic.report.entity.SQLCondition;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -10,6 +11,8 @@ import java.util.List;
 public class SQLCommand {
 
     public static String FROM = "from";
+
+    public static String CONDITION_FLAG = "@@";
 
     public static String formatSql(String sql, TableInfo tableInfo) {
         StringBuilder stringBuffer = new StringBuilder("select ");
@@ -68,6 +71,68 @@ public class SQLCommand {
         }
 
         return result;
+    }
+
+    public static boolean containCondition(String sql) {
+        return sql.contains(SQLCommand.CONDITION_FLAG) || sql.contains("{") || sql.contains("}");
+    }
+
+    public static List<SQLCondition> analyzeCondition(String sql) {
+        List<SQLCondition> list = new ArrayList<>();
+        int index = 0;
+        while (sql.indexOf(SQLCommand.CONDITION_FLAG, index) != -1) {
+            SQLCondition sqlCondition = new SQLCondition();
+            index = sql.indexOf(SQLCommand.CONDITION_FLAG, index);
+            String moduleCode = sql.substring(index, sql.indexOf("}", index) + 1);
+            String field = moduleCode.substring(moduleCode.indexOf("{") + 1, moduleCode.indexOf("}"));
+            if (field.contains(",")) {
+                String[] fieldArray = field.split("[,]");
+                sqlCondition.setModuleField(fieldArray[0]);
+                sqlCondition.setModuleName(fieldArray[1]);
+            } else {
+                sqlCondition.setModuleField(field);
+                sqlCondition.setModuleName(field);
+            }
+            sqlCondition.setModuleCode(moduleCode);
+
+            SQLCondition.moduleType[] values = SQLCondition.moduleType.values();
+            for (SQLCondition.moduleType value : values) {
+                if (sqlCondition.getModuleField().contains(value.name())) {
+                    sqlCondition.setModuleType(value.name());
+                }
+            }
+            if (StringUtils.isEmpty(sqlCondition.getModuleType())) {
+                sqlCondition.setModuleType(SQLCondition.moduleType.input.name());
+            }
+
+            list.add(sqlCondition);
+            index++;
+        }
+
+        return list;
+    }
+
+    public static String removeCondition(String sql) {
+        if (sql.contains(SQLCommand.CONDITION_FLAG)) {
+            String where = "";
+            int index = sql.lastIndexOf("where");
+            String whereSQL = sql.substring(index + 6);
+            String[] whereArray = whereSQL.split("and|or");
+            for (String key : whereArray) {
+                if (!key.contains(SQLCommand.CONDITION_FLAG)) {
+                    where += key;
+                }
+            }
+            if (where.length() > 0) {
+                where = sql.substring(0, index + 6) + where;
+            } else {
+                where = sql.substring(0, index);
+            }
+
+            return where;
+        }
+
+        return sql;
     }
 
     public static int getSelectIndex(String sql) {

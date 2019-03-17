@@ -6,4 +6,6 @@ public interface BasicService {
 
     BasicResult select(String sql);
 
+    BasicResult list(String sql);
+
 }
