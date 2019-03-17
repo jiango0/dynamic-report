@@ -1,4 +1,3 @@
-var sql = "SELECT ri.title, ri.content, ec.id, ec.content eccontent, ec.create_date, ec.create_user_id, ec.del_flag, ec.info_id, ec.parent_id, ec.shelve_flag, (select title from resource_info where id = ec.info_id) as ti FROM event_comment ec LEFT JOIN resource_info ri ON ec.info_id = ri.id";
 $(function(){
     //加载数据源
     $.ajax({
@@ -8,7 +7,6 @@ $(function(){
         contentType: 'application/json',
         data:{},
         success: function(result){
-            console.log(result);
             var treeData = [];
             for (var i=0; i<result.data.length; i++) {
                 var obj = {};
@@ -19,7 +17,15 @@ $(function(){
                 if (modelInfoList !== null && modelInfoList.length > 0) {
                     obj.nodes = [];
                     for (var k=0; k<modelInfoList.length; k++) {
-                        obj.nodes.push({"text":modelInfoList[k].title, "level":1, "id":modelInfoList[k].id, "sql":modelInfoList[k].content, "datasourceName":obj.text, "datasourceId":modelInfoList[k].dataSourceId});
+                        obj.nodes.push({
+                            "text":modelInfoList[k].title,
+                            "level":1,
+                            "id":modelInfoList[k].id,
+                            "sql":modelInfoList[k].content,
+                            "datasourceName":obj.text,
+                            "datasourceId":modelInfoList[k].dataSourceId,
+                            "datasource":result.data[i]
+                        });
                     }
                 }
 
@@ -30,13 +36,19 @@ $(function(){
                 onNodeSelected: function(event, data) {
                     $("#table_sql").html("");
                     if (data.sql !== null && data.sql !== "" && data.sql !== undefined) {
+                        $("#datasource_driverClassName").val(data.datasource.driverClassName);
+                        $("#datasource_id").val(data.datasource.id);
+                        $("#datasource_username").val(data.datasource.username);
+                        $("#datasource_password").val(data.datasource.password);
+                        $("#datasource_url").val(data.datasource.url);
+
                         $.ajax({
                             type: "post",
                             url: "/basic/getTableHead",
                             dataType: 'json',
+                            headers: getHeads(),
                             data:{"sql":data.sql},
                             success: function(result){
-                                console.log(result.data);
                                 createTable(result.data);
                                 createCondition(result.data);
                             }
@@ -47,6 +59,7 @@ $(function(){
                     $("#dataSourceId").text(data.datasourceName);
                     $("#dataSourceId").attr("data-source-id", data.datasourceId);
                     $("#dataSourceId").attr("data-id", data.id);
+
                 }
             });
         }
@@ -121,7 +134,6 @@ $(function(){
 
     $("#query_data").click(function(){
         var content = $("#content").val();
-        console.log(content);
         if (content !== '') {
             var d = {};
             var t = $("#form3").serializeArray();
@@ -135,8 +147,6 @@ $(function(){
                 }
                 content = content.replace(key, '"' + v + '"');
             }
-            console.log(d);
-            console.log(content);
 
             getSqlResult(content);
         }
@@ -171,6 +181,7 @@ $(function(){
             type: "post",
             url: "/basic/sql",
             dataType: 'json',
+            headers: getHeads(),
             data:{"sql":sql},
             success: function(result){
                 createTable(result.data);
@@ -262,4 +273,14 @@ $(function(){
         }
 
         return obj.find(".has-error").length == 0;
+    }
+
+    function getHeads() {
+        var heads = {};
+        heads.driverClassName = $("#datasource_driverClassName").val();
+        heads.url = $("#datasource_url").val();
+        heads.username = $("#datasource_username").val();
+        heads.password = $("#datasource_password").val();
+        heads.id = $("#datasource_id").val();
+        return heads;
     }

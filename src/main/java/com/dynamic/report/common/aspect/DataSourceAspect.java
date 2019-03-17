@@ -59,13 +59,25 @@ public class DataSourceAspect {
             param.put(name, value);
         }
         DataSourceInfo dataSourceInfo = new DataSourceInfo();
+//        dataSourceInfo.setId(param.get("id"));
+//        dataSourceInfo.setDriverClassName();
+//        dataSourceInfo.setName();
+//        dataSourceInfo.setUrl();
+//        dataSourceInfo.setUsername();
+//        dataSourceInfo.setPassword();
+
         Class<? extends DataSourceInfo> clazz = DataSourceInfo.class;
         Method[] methods = clazz.getDeclaredMethods();
         for(Method method : methods) {
             String methodStr = method.getName().substring(3).toLowerCase();
             if(param.containsKey(methodStr) && "set".equals(method.getName().substring(0, 3)) ) {
                 try {
-                    method.invoke(dataSourceInfo, param.get(methodStr));
+                    String p = param.get(methodStr);
+                    if ("id".equals(methodStr)) {
+                        method.invoke(dataSourceInfo, Long.valueOf(param.get(methodStr)));
+                    } else {
+                        method.invoke(dataSourceInfo, param.get(methodStr));
+                    }
                 } catch (Exception e) {
                     logger.error("设置参数错误" + "name =" + methodStr + " value = " + param.get(methodStr) , e);
                 }
