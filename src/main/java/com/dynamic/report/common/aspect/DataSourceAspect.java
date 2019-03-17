@@ -59,12 +59,6 @@ public class DataSourceAspect {
             param.put(name, value);
         }
         DataSourceInfo dataSourceInfo = new DataSourceInfo();
-//        dataSourceInfo.setId(param.get("id"));
-//        dataSourceInfo.setDriverClassName();
-//        dataSourceInfo.setName();
-//        dataSourceInfo.setUrl();
-//        dataSourceInfo.setUsername();
-//        dataSourceInfo.setPassword();
 
         Class<? extends DataSourceInfo> clazz = DataSourceInfo.class;
         Method[] methods = clazz.getDeclaredMethods();
