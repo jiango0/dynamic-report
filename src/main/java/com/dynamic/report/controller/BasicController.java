@@ -16,7 +16,7 @@ public class BasicController {
 
     @RequestMapping(value = "sql")
     public ResultEntity<BasicResult> execute(String sql) {
-        return ResultEntity.returnSuccess(basicService.select(sql));
+        return ResultEntity.returnSuccess(basicService.select(sql, " limit 100 "));
     }
 
     @RequestMapping(value = "getTableHead")

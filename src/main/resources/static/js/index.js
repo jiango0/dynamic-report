@@ -154,6 +154,46 @@ $(function(){
         return false;
     });
 
+    $("#export_data").click(function(){
+        var content = $("#content").val();
+        if (content !== '') {
+            var d = {};
+            var t = $("#form3").serializeArray();
+            $.each(t, function () {
+                d[this.name] = this.value;
+            });
+            for (var key in d) {
+                var v = d[key];
+                if (v === '' || v === null || v === undefined) {
+                    continue;
+                }
+                content = content.replace(key, '"' + v + '"');
+            }
+        }
+
+        var form = $("<form>");
+        form.attr("style", "display:none");
+        form.attr("target", "");
+        form.attr("method", "post");
+        form.attr("action", "/export");//请求地址
+        $("body").append(form);//将表单放置在web中
+
+        var input1 = $("<input>");
+        input1.attr("type", "hidden");
+        input1.attr("name", "sql");
+        input1.attr("value", content);
+        form.append(input1);
+
+        var input2 = $("<input>");
+        input2.attr("type", "hidden");
+        input2.attr("name", "_header");
+        input2.attr("value", JSON.stringify(getHeads()));
+        form.append(input2);
+
+        form.submit().remove();
+
+    });
+
     //表单内容发生变化时，检查表单内容
     $("form input").change(function(){
         if ($(this).next().html().length > 0) {

@@ -1,5 +1,7 @@
 package com.dynamic.report.common.aspect;
 
+import com.alibaba.druid.util.StringUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.dynamic.report.common.datasource.SwitchDataSource;
 import com.dynamic.report.entity.DataSourceInfo;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -14,8 +16,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -51,15 +51,21 @@ public class DataSourceAspect {
     }
 
     private DataSourceInfo createDataSourceInfo(HttpServletRequest request) {
-        Map<String, String> param = new HashMap<>();
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String name = headerNames.nextElement();
-            String value = request.getHeader(name);
-            param.put(name, value);
+        Map<String, String> param = null;
+        String header = request.getParameter("_header");
+        if (!StringUtils.isEmpty(header)) {
+            param = JSONObject.parseObject(header, Map.class);
+        } else {
+            param = new HashMap<>();
+            Enumeration<String> headerNames = request.getHeaderNames();
+            while (headerNames.hasMoreElements()) {
+                String name = headerNames.nextElement();
+                String value = request.getHeader(name);
+                param.put(name, value);
+            }
         }
-        DataSourceInfo dataSourceInfo = new DataSourceInfo();
 
+        DataSourceInfo dataSourceInfo = new DataSourceInfo();
         Class<? extends DataSourceInfo> clazz = DataSourceInfo.class;
         Method[] methods = clazz.getDeclaredMethods();
         for(Method method : methods) {

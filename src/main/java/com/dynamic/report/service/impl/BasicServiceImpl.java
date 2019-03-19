@@ -26,10 +26,10 @@ public class BasicServiceImpl implements BasicService {
     @Autowired
     BasicMapper basicMapper;
 
-    public BasicResult select(String sql) {
+    public BasicResult select(String sql, String limit) {
         BasicResult basicResult = this.list(sql);
         sql = SQLCommand.removeCondition(sql);
-        sql = sql + " limit 100";
+        sql += limit;
         List<Map<String, Object>> select = basicMapper.select(sql);
         basicResult.setList(select);
 
