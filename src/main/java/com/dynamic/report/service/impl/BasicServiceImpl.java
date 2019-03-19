@@ -73,6 +73,7 @@ public class BasicServiceImpl implements BasicService {
         }
 
         Map<String, String> tableInfo = this.getTableInfo(tableInfoList);
+        sql = SQLCommand.replaceSQL(sql, tableInfoList);
         List<SQLEntity> sqlEntitieList = SQLCommand.analyzeSql(sql);
         for (SQLEntity sqlEntity : sqlEntitieList) {
             sqlEntity.setFieldName(tableInfo.get(sqlEntity.getFieldCode()));

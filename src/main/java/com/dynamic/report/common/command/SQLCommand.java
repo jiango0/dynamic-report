@@ -1,18 +1,24 @@
 package com.dynamic.report.common.command;
 
+import com.dynamic.report.common.entity.ColumnInfo;
 import com.dynamic.report.common.entity.SQLEntity;
 import com.dynamic.report.common.entity.TableInfo;
 import com.dynamic.report.entity.SQLCondition;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SQLCommand {
 
     public static String FROM = "from";
 
     public static String CONDITION_FLAG = "@@";
+
+    public static String ALL_RESULT = "*";
 
     public static String formatSql(String sql, TableInfo tableInfo) {
         StringBuilder stringBuffer = new StringBuilder("select ");
@@ -71,6 +77,48 @@ public class SQLCommand {
         }
 
         return result;
+    }
+
+    /**
+     * 查询SQL中是否包含 “*”
+     * @param   sql
+     * @return  sql
+     * */
+    public static String replaceSQL (String sql, List<TableInfo> tableInfoList) {
+        StringBuffer result = new StringBuffer("select ");
+
+        Map<String, List<ColumnInfo>> tableMap = new HashMap<>();
+        for (TableInfo tableInfo : tableInfoList) {
+            tableMap.put(tableInfo.getTableName(), tableInfo.getList());
+            tableMap.put(tableInfo.getTableAlias(), tableInfo.getList());
+        }
+        int index = SQLCommand.getSelectIndex(sql);
+        String[] sqlArr = sql.substring(6, index).split("[,]");
+        for (String field : sqlArr) {
+            StringBuffer stringBuffer = new StringBuffer(field);
+            if (field.contains("*")) {
+                String[] fieldArr = field.split("[.]");
+                List<ColumnInfo> columnInfos = tableMap.get(fieldArr[0].trim());
+                if (!CollectionUtils.isEmpty(columnInfos)) {
+                    stringBuffer.delete(0, stringBuffer.length());
+                    for (int i=0; i<columnInfos.size(); i++) {
+                        if (i != 0) {
+                            stringBuffer.append(",");
+                        }
+                        stringBuffer.append(fieldArr[0]);
+                        stringBuffer.append(".");
+                        stringBuffer.append(columnInfos.get(i).getColumnName());
+                    }
+                }
+            }
+
+            result.append(stringBuffer.toString());
+            result.append(" ");
+        }
+
+        result.append(sql.substring(index));
+
+        return result.toString();
     }
 
     public static boolean containCondition(String sql) {
