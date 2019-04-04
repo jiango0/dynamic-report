@@ -268,23 +268,25 @@ $(function(){
                 if (conditions[i].moduleType === 'input') {
                     module = `\ 
                            <div class="col-sm-3">\
-                           <input type="text" id="`+conditions[i].moduleCode+`" name="`+conditions[i].moduleCode+`" class="form-control"/>\
+                                <input type="text" id="`+conditions[i].moduleCode+`" name="`+conditions[i].moduleCode+`" class="form-control"/>\
                            </div>\
                           `;
-                } else if(conditions[i].moduleType === 'date') {
+                } else if (conditions[i].moduleType === 'date') {
                     module = `\
-                <div class="col-sm-3 input-append date form_datetime">\
-                    <input size="16" type="text" id="`+conditions[i].moduleCode+`" name="`+conditions[i].moduleCode+`" class="form-control" readonly="readonly"/>\
-                    <span class="add-on"><i class="icon-remove"></i></span>\
-                    <span class="add-on"><i class="icon-th"></i></span>\
-                </div>\
+                            <div class="col-sm-3 input-append date form_datetime">\
+                                <input size="16" type="text" id="`+conditions[i].moduleCode+`" name="`+conditions[i].moduleCode+`" class="form-control" readonly="readonly"/>\
+                                <span class="add-on"><i class="icon-remove"></i></span>\
+                                <span class="add-on"><i class="icon-th"></i></span>\
+                            </div>\
                 `;
+                } else if (conditions[i].moduleType === 'combox') {
+
                 }
                 div += `\
-            <div class="form-group">\
-                <label class="col-sm-1 control-label">`+conditions[i].moduleName+`</label>\
-                 `+module+`\
-            </div>\
+                <div class="form-group">\
+                    <label class="col-sm-1 control-label">`+conditions[i].moduleName+`</label>\
+                     `+module+`\
+                </div>\
             `;
             }
 

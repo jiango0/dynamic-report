@@ -4,7 +4,8 @@ public class SQLCondition {
 
     public enum moduleType {
         input,
-        date
+        date,
+        combox
     }
 
     private String moduleCode;
